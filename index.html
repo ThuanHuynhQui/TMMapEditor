@@ -10,44 +10,52 @@
             margin: 20px;
             background: #f0f0f0;
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         .controls {
             margin-bottom: 20px;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 5px;
         }
+
         .control-group {
             display: inline-block;
             margin-right: 20px;
             margin-bottom: 10px;
         }
+
         .control-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
+
         input, select, button {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         button {
             background: #4CAF50;
             color: white;
             cursor: pointer;
             margin-right: 10px;
         }
+
         button:hover {
             background: #45a049;
         }
+
         .grid-container {
             border: 2px solid #333;
             margin: 20px 0;
@@ -57,15 +65,18 @@
             overflow: auto;
             position: relative;
         }
+
         .grid-wrapper {
             transform-origin: top left;
             transition: transform 0.2s ease;
         }
+
         .grid {
             display: grid;
             gap: 1px;
             background: #ccc;
         }
+
         .cell {
             width: var(--cell-size, 25px);
             height: var(--cell-size, 25px);
@@ -79,14 +90,20 @@
             position: relative;
             min-width: 8px;
             min-height: 8px;
+            user-select: none;
+            -webkit-user-select: none;  /* Safari */
+            -ms-user-select: none;
         }
+
         .cell:hover {
             background: #e0e0e0;
         }
+
         .cell.selected {
             background: #007bff;
             color: white;
         }
+
         .brush-options {
             display: flex;
             gap: 20px;
@@ -96,10 +113,12 @@
             background: #f8f9fa;
             border-radius: 5px;
         }
+
         .brush-options .control-group {
             margin-right: 0;
             margin-bottom: 0;
         }
+
         #currentBrushDisplay {
             padding: 8px 12px;
             background: #e9ecef;
@@ -108,12 +127,14 @@
             font-weight: bold;
             color: #495057;
         }
+
         .export-section {
             margin-top: 20px;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 5px;
         }
+
         .csv-output {
             width: 100%;
             height: 200px;
@@ -121,14 +142,17 @@
             font-size: 12px;
             margin-top: 10px;
         }
+
         .preset-buttons {
             margin-bottom: 15px;
         }
+
         .preset-buttons button {
             background: #17a2b8;
             margin-right: 5px;
             margin-bottom: 5px;
         }
+
         .preset-buttons button:hover {
             background: #138496;
         }
@@ -152,11 +176,6 @@
             <button onclick="resetZoom()">Reset Zoom</button>
         </div>
 
-        <div class="control-group">
-            <label>Map Name:</label>
-            <input type="text" id="mapName" value="Level_1" placeholder="Enter map name">
-        </div>
-
         <div class="preset-buttons">
             <button onclick="clearGrid()">Clear All</button>
         </div>
@@ -167,16 +186,33 @@
             <label>Obj Brush:</label>
             <select id="objBrush" onchange="updateBrush()">
                 <option value="">None</option>
+                <option value="Obj 0">Obj 0</option>
                 <option value="Obj 1">Obj 1</option>
                 <option value="Obj 2">Obj 2</option>
+                <option value="Obj 3">Obj 3</option>
+                <option value="Obj 4">Obj 4</option>
+                <option value="Obj 5">Obj 5</option>
+                <option value="Obj 6">Obj 6</option>
+                <option value="Obj 7">Obj 7</option>
+                <option value="Obj 8">Obj 8</option>
+                <option value="Obj 9">Obj 9</option>
             </select>
         </div>
         <div class="control-group">
             <label>Lvl Brush:</label>
             <select id="lvlBrush" onchange="updateBrush()">
                 <option value="">None</option>
+                <option value="Lvl 0">Lvl 0</option>
                 <option value="Lvl 1">Lvl 1</option>
                 <option value="Lvl 2">Lvl 2</option>
+                <option value="Lvl 3">Lvl 3</option>
+                <option value="Lvl 4">Lvl 4</option>
+                <option value="Lvl 5">Lvl 5</option>
+                <option value="Lvl 6">Lvl 6</option>
+                <option value="Lvl 7">Lvl 7</option>
+                <option value="Lvl 8">Lvl 8</option>
+                <option value="Lvl 9">Lvl 9</option>
+
             </select>
         </div>
         <div class="control-group">
@@ -274,12 +310,18 @@
             for (let col = 0; col < gridSize; col++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
+                cell.textContent = 'Obj 0'
                 cell.dataset.row = row;
                 cell.dataset.col = col;
                 cell.addEventListener('mousedown', startDrawing);
                 cell.addEventListener('mouseenter', continueDrawing);
                 cell.addEventListener('mouseup', stopDrawing);
                 grid.appendChild(cell);
+                cell.style.background = getBrushColor(cell.textContent);
+                cell.style.color = cell.textContent ? 'white' : 'black';
+                
+                const key = `${row},${col}`;
+                gridData[key] = 'Obj 0';
             }
         }
     }
@@ -329,17 +371,145 @@
         if (!brush) return '#ffffff';
 
         const colors = {
+            // Objs
             'Obj 1': '#ff6b6b',
             'Obj 2': '#4ecdc4',
+            'Obj 3': '#fcbf49',
+            'Obj 4': '#a29bfe',
+            'Obj 5': '#fd79a8',
+            'Obj 6': '#00cec9',
+            'Obj 7': '#fab1a0',
+            'Obj 8': '#6c5ce7',
+            'Obj 9': '#55efc4',
+            'Obj 0': '#ffeaa7',
+
+            // Lvls
             'Lvl 1': '#45b7d1',
             'Lvl 2': '#96ceb4',
+            'Lvl 3': '#f67280',
+            'Lvl 4': '#c06c84',
+            'Lvl 5': '#6c5b7b',
+            'Lvl 6': '#355c7d',
+            'Lvl 7': '#ffb347',
+            'Lvl 8': '#b2bec3',
+            'Lvl 9': '#74b9ff',
+            'Lvl 0': '#dfe6e9',
+
+            // Obj + Lvl combos
             'Obj 1, Lvl 1': '#ff8a65',
             'Obj 1, Lvl 2': '#ffb74d',
-            'Obj 2, Lvl 1': '#81c784',
-            'Obj 2, Lvl 2': '#ba68c8'
+            'Obj 1, Lvl 3': '#ffd54f',
+            'Obj 1, Lvl 4': '#d4e157',
+            'Obj 1, Lvl 5': '#aed581',
+            'Obj 1, Lvl 6': '#81c784',
+            'Obj 1, Lvl 7': '#4db6ac',
+            'Obj 1, Lvl 8': '#4dd0e1',
+            'Obj 1, Lvl 9': '#4fc3f7',
+            'Obj 1, Lvl 0': '#9575cd',
+
+            'Obj 2, Lvl 1': '#ba68c8',
+            'Obj 2, Lvl 2': '#f06292',
+            'Obj 2, Lvl 3': '#e57373',
+            'Obj 2, Lvl 4': '#f48fb1',
+            'Obj 2, Lvl 5': '#ce93d8',
+            'Obj 2, Lvl 6': '#b39ddb',
+            'Obj 2, Lvl 7': '#90caf9',
+            'Obj 2, Lvl 8': '#a5d6a7',
+            'Obj 2, Lvl 9': '#80cbc4',
+            'Obj 2, Lvl 0': '#e6ee9c',
+
+            'Obj 3, Lvl 1': '#ff6f91',
+            'Obj 3, Lvl 2': '#ff9671',
+            'Obj 3, Lvl 3': '#ffc75f',
+            'Obj 3, Lvl 4': '#f9f871',
+            'Obj 3, Lvl 5': '#a5dee5',
+            'Obj 3, Lvl 6': '#b5ead7',
+            'Obj 3, Lvl 7': '#c7ceea',
+            'Obj 3, Lvl 8': '#d5aaff',
+            'Obj 3, Lvl 9': '#f7d794',
+            'Obj 3, Lvl 0': '#ea8685',
+
+            'Obj 4, Lvl 1': '#ff9ff3',
+            'Obj 4, Lvl 2': '#feca57',
+            'Obj 4, Lvl 3': '#ff6b6b',
+            'Obj 4, Lvl 4': '#48dbfb',
+            'Obj 4, Lvl 5': '#1dd1a1',
+            'Obj 4, Lvl 6': '#f368e0',
+            'Obj 4, Lvl 7': '#ff9f43',
+            'Obj 4, Lvl 8': '#00d2d3',
+            'Obj 4, Lvl 9': '#10ac84',
+            'Obj 4, Lvl 0': '#c8d6e5',
+
+            'Obj 5, Lvl 1': '#e84393',
+            'Obj 5, Lvl 2': '#fdcb6e',
+            'Obj 5, Lvl 3': '#00b894',
+            'Obj 5, Lvl 4': '#e17055',
+            'Obj 5, Lvl 5': '#6c5ce7',
+            'Obj 5, Lvl 6': '#ffeaa7',
+            'Obj 5, Lvl 7': '#fab1a0',
+            'Obj 5, Lvl 8': '#0984e3',
+            'Obj 5, Lvl 9': '#fd79a8',
+            'Obj 5, Lvl 0': '#81ecec',
+
+            'Obj 6, Lvl 1': '#d63031',
+            'Obj 6, Lvl 2': '#e17055',
+            'Obj 6, Lvl 3': '#00cec9',
+            'Obj 6, Lvl 4': '#fd79a8',
+            'Obj 6, Lvl 5': '#6c5ce7',
+            'Obj 6, Lvl 6': '#ffeaa7',
+            'Obj 6, Lvl 7': '#55efc4',
+            'Obj 6, Lvl 8': '#74b9ff',
+            'Obj 6, Lvl 9': '#a29bfe',
+            'Obj 6, Lvl 0': '#fdcb6e',
+
+            'Obj 7, Lvl 1': '#9b59b6',
+            'Obj 7, Lvl 2': '#3498db',
+            'Obj 7, Lvl 3': '#2ecc71',
+            'Obj 7, Lvl 4': '#e74c3c',
+            'Obj 7, Lvl 5': '#1abc9c',
+            'Obj 7, Lvl 6': '#f1c40f',
+            'Obj 7, Lvl 7': '#e67e22',
+            'Obj 7, Lvl 8': '#95a5a6',
+            'Obj 7, Lvl 9': '#34495e',
+            'Obj 7, Lvl 0': '#7f8c8d',
+
+            'Obj 8, Lvl 1': '#8e44ad',
+            'Obj 8, Lvl 2': '#2980b9',
+            'Obj 8, Lvl 3': '#27ae60',
+            'Obj 8, Lvl 4': '#c0392b',
+            'Obj 8, Lvl 5': '#16a085',
+            'Obj 8, Lvl 6': '#f39c12',
+            'Obj 8, Lvl 7': '#d35400',
+            'Obj 8, Lvl 8': '#bdc3c7',
+            'Obj 8, Lvl 9': '#2c3e50',
+            'Obj 8, Lvl 0': '#ecf0f1',
+
+            'Obj 9, Lvl 1': '#1abc9c',
+            'Obj 9, Lvl 2': '#2ecc71',
+            'Obj 9, Lvl 3': '#3498db',
+            'Obj 9, Lvl 4': '#9b59b6',
+            'Obj 9, Lvl 5': '#34495e',
+            'Obj 9, Lvl 6': '#f1c40f',
+            'Obj 9, Lvl 7': '#e67e22',
+            'Obj 9, Lvl 8': '#e74c3c',
+            'Obj 9, Lvl 9': '#ecf0f1',
+            'Obj 9, Lvl 0': '#95a5a6',
+
+            'Obj 0, Lvl 1': '#b71540',
+            'Obj 0, Lvl 2': '#1e3799',
+            'Obj 0, Lvl 3': '#38ada9',
+            'Obj 0, Lvl 4': '#6a89cc',
+            'Obj 0, Lvl 5': '#60a3bc',
+            'Obj 0, Lvl 6': '#82ccdd',
+            'Obj 0, Lvl 7': '#b8e994',
+            'Obj 0, Lvl 8': '#78e08f',
+            'Obj 0, Lvl 9': '#fa983a',
+            'Obj 0, Lvl 0': '#e58e26',
         };
+
         return colors[brush] || '#e9ecef';
     }
+
 
     function clearGrid() {
         gridData = {};
@@ -361,101 +531,6 @@
             csv += rowData.map(cell => `"${cell}"`).join(',') + '\n';
         }
         document.getElementById('csvOutput').value = csv;
-    }
-
-    function exportToJSON() {
-        const mapName = document.getElementById('mapName').value;
-        const exportData = {
-            name: mapName,
-            size: gridSize,
-            data: gridData,
-            created: new Date().toISOString()
-        };
-        document.getElementById('csvOutput').value = JSON.stringify(exportData, null, 2);
-    }
-
-    function saveTemplate() {
-        const mapName = document.getElementById('mapName').value;
-        const template = {
-            name: mapName,
-            size: gridSize,
-            data: gridData
-        };
-        localStorage.setItem(`template_${mapName}`, JSON.stringify(template));
-        alert(`Template "${mapName}" saved!`);
-    }
-
-    function loadTemplate() {
-        const mapName = prompt('Enter template name to load:');
-        if (mapName) {
-            const template = localStorage.getItem(`template_${mapName}`);
-            if (template) {
-                const data = JSON.parse(template);
-                gridSize = data.size;
-                document.getElementById('gridSize').value = gridSize;
-                gridData = data.data;
-                createGrid();
-                // Repaint grid
-                Object.keys(gridData).forEach(key => {
-                    const [row, col] = key.split(',');
-                    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    if (cell) {
-                        paintCell(cell);
-                    }
-                });
-            } else {
-                alert('Template not found!');
-            }
-        }
-    }
-
-    function loadPreset(type) {
-        clearGrid();
-        // Generate some sample patterns
-        if (type === 'forest') {
-            // Random forest pattern
-            for (let i = 0; i < gridSize * gridSize * 0.3; i++) {
-                const row = Math.floor(Math.random() * gridSize);
-                const col = Math.floor(Math.random() * gridSize);
-                const key = `${row},${col}`;
-                gridData[key] = Math.random() > 0.5 ? 'Obj 1' : 'Obj 1, Lvl 1';
-            }
-        } else if (type === 'dungeon') {
-            // Create walls around border
-            for (let i = 0; i < gridSize; i++) {
-                gridData[`0,${i}`] = 'Obj 2';
-                gridData[`${gridSize-1},${i}`] = 'Obj 2';
-                gridData[`${i},0`] = 'Obj 2';
-                gridData[`${i},${gridSize-1}`] = 'Obj 2';
-            }
-            // Add some internal walls
-            for (let i = 0; i < gridSize * 2; i++) {
-                const row = Math.floor(Math.random() * (gridSize-2)) + 1;
-                const col = Math.floor(Math.random() * (gridSize-2)) + 1;
-                gridData[`${row},${col}`] = 'Obj 2';
-            }
-        } else if (type === 'city') {
-            // Create a grid pattern
-            for (let row = 0; row < gridSize; row += 5) {
-                for (let col = 0; col < gridSize; col++) {
-                    gridData[`${row},${col}`] = 'Obj 2, Lvl 2';
-                }
-            }
-            for (let col = 0; col < gridSize; col += 5) {
-                for (let row = 0; row < gridSize; row++) {
-                    gridData[`${row},${col}`] = 'Obj 2, Lvl 2';
-                }
-            }
-        }
-
-        // Repaint grid
-        Object.keys(gridData).forEach(key => {
-            const [row, col] = key.split(',');
-            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-            if (cell) {
-                paintCell(cell);
-            }
-        });
     }
 
     // Initialize grid
