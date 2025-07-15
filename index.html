@@ -230,7 +230,7 @@
 
     <div class="export-section">
         <h3>Export</h3>
-        <button onclick="exportToCSV()">Generate CSV for Google Sheets</button>
+        <button onclick="exportToGoogleSheetText()">Generate Text for Google Sheets</button>
 
         <textarea class="csv-output" id="csvOutput" placeholder="CSV output will appear here..."></textarea>
     </div>
@@ -531,6 +531,19 @@
             csv += rowData.map(cell => `"${cell}"`).join(',') + '\n';
         }
         document.getElementById('csvOutput').value = csv;
+    }
+
+    function exportToGoogleSheetText() {
+        let text = '';
+        for (let row = 0; row < gridSize; row++) {
+            let rowData = [];
+            for (let col = 0; col < gridSize; col++) {
+                const key = `${row},${col}`;
+                rowData.push(gridData[key] || '');
+            }
+            text += rowData.join('\t') + '\n'; // use tab instead of comma
+        }
+        document.getElementById('csvOutput').value = text.trim();
     }
 
     // Initialize grid
