@@ -89,19 +89,24 @@
         }
         .brush-options {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: end;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
         }
-        .brush-option {
-            padding: 5px 10px;
-            border: 2px solid #ddd;
-            cursor: pointer;
+        .brush-options .control-group {
+            margin-right: 0;
+            margin-bottom: 0;
+        }
+        #currentBrushDisplay {
+            padding: 8px 12px;
+            background: #e9ecef;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            background: white;
-        }
-        .brush-option.active {
-            border-color: #007bff;
-            background: #e3f2fd;
+            font-weight: bold;
+            color: #495057;
         }
         .export-section {
             margin-top: 20px;
@@ -130,300 +135,335 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Game Grid Map Editor</h1>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label>Grid Size:</label>
-                <input type="number" id="gridSize" value="20" min="5" max="100">
-                <button onclick="updateGridSize()">Update Grid</button>
-            </div>
-            
-            <div class="control-group">
-                <label>Zoom:</label>
-                <input type="range" id="zoomSlider" min="0.1" max="2" step="0.1" value="1" oninput="updateZoom()">
-                <span id="zoomValue">100%</span>
-                <button onclick="resetZoom()">Reset Zoom</button>
-            </div>
-            
-            <div class="control-group">
-                <label>Map Name:</label>
-                <input type="text" id="mapName" value="Level_1" placeholder="Enter map name">
-            </div>
-            
-            <div class="preset-buttons">
-                <button onclick="clearGrid()">Clear All</button>
-            </div>
+<div class="container">
+    <h1>Game Grid Map Editor</h1>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Grid Size:</label>
+            <input type="number" id="gridSize" value="20" min="5" max="100">
+            <button onclick="updateGridSize()">Update Grid</button>
         </div>
 
-        <div class="brush-options">
-            <div class="brush-option active" onclick="selectBrush('Obj 1')">Obj 1</div>
-            <div class="brush-option" onclick="selectBrush('Obj 2')">Obj 2</div>
-            <div class="brush-option" onclick="selectBrush('Lvl 1')">Lvl 1</div>
-            <div class="brush-option" onclick="selectBrush('Lvl 2')">Lvl 2</div>
-            <div class="brush-option" onclick="selectBrush('Obj 1, Lvl 1')">Obj 1 + Lvl 1</div>
-            <div class="brush-option" onclick="selectBrush('Obj 1, Lvl 2')">Obj 1 + Lvl 2</div>
-            <div class="brush-option" onclick="selectBrush('Obj 2, Lvl 1')">Obj 2 + Lvl 1</div>
-            <div class="brush-option" onclick="selectBrush('Obj 2, Lvl 2')">Obj 2 + Lvl 2</div>
-            <div class="brush-option" onclick="selectBrush('')">Eraser</div>
+        <div class="control-group">
+            <label>Zoom:</label>
+            <input type="range" id="zoomSlider" min="0.1" max="2" step="0.1" value="1" oninput="updateZoom()">
+            <span id="zoomValue">100%</span>
+            <button onclick="resetZoom()">Reset Zoom</button>
         </div>
 
-        <div class="grid-container">
-            <div class="grid-wrapper" id="gridWrapper">
-                <div class="grid" id="gameGrid"></div>
-            </div>
+        <div class="control-group">
+            <label>Map Name:</label>
+            <input type="text" id="mapName" value="Level_1" placeholder="Enter map name">
         </div>
 
-        <div class="export-section">
-            <h3>Export</h3>
-            <button onclick="exportToCSV()">Generate CSV for Google Sheets</button>
-            
-            <textarea class="csv-output" id="csvOutput" placeholder="CSV output will appear here..."></textarea>
+        <div class="preset-buttons">
+            <button onclick="clearGrid()">Clear All</button>
         </div>
     </div>
 
-    <script>
-        let gridSize = 20;
-        let currentBrush = 'Obj 1';
-        let isDrawing = false;
-        let gridData = {};
-        let currentZoom = 1;
+    <div class="brush-options">
+        <div class="control-group">
+            <label>Obj Brush:</label>
+            <select id="objBrush" onchange="updateBrush()">
+                <option value="">None</option>
+                <option value="Obj 1">Obj 1</option>
+                <option value="Obj 2">Obj 2</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>Lvl Brush:</label>
+            <select id="lvlBrush" onchange="updateBrush()">
+                <option value="">None</option>
+                <option value="Lvl 1">Lvl 1</option>
+                <option value="Lvl 2">Lvl 2</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>Current Brush:</label>
+            <span id="currentBrushDisplay">None</span>
+            <button onclick="clearBrush()">Clear Brush</button>
+        </div>
+    </div>
 
-        function updateGridSize() {
-            gridSize = parseInt(document.getElementById('gridSize').value);
-            updateCellSize();
-            createGrid();
+    <div class="grid-container">
+        <div class="grid-wrapper" id="gridWrapper">
+            <div class="grid" id="gameGrid"></div>
+        </div>
+    </div>
+
+    <div class="export-section">
+        <h3>Export</h3>
+        <button onclick="exportToCSV()">Generate CSV for Google Sheets</button>
+
+        <textarea class="csv-output" id="csvOutput" placeholder="CSV output will appear here..."></textarea>
+    </div>
+</div>
+
+<script>
+    let gridSize = 20;
+    let currentBrush = '';
+    let isDrawing = false;
+    let gridData = {};
+    let currentZoom = 1;
+
+    function updateBrush() {
+        const objBrush = document.getElementById('objBrush').value;
+        const lvlBrush = document.getElementById('lvlBrush').value;
+
+        // Combine brushes based on selection
+        let brushParts = [];
+        if (objBrush) brushParts.push(objBrush);
+        if (lvlBrush) brushParts.push(lvlBrush);
+
+        currentBrush = brushParts.join(', ');
+
+        // Update display
+        document.getElementById('currentBrushDisplay').textContent = currentBrush || 'None';
+        document.getElementById('currentBrushDisplay').style.background = getBrushColor(currentBrush);
+        document.getElementById('currentBrushDisplay').style.color = currentBrush ? 'white' : '#495057';
+    }
+
+    function clearBrush() {
+        document.getElementById('objBrush').value = '';
+        document.getElementById('lvlBrush').value = '';
+        updateBrush();
+    }
+
+    function updateGridSize() {
+        gridSize = parseInt(document.getElementById('gridSize').value);
+        updateCellSize();
+        createGrid();
+    }
+
+    function updateZoom() {
+        currentZoom = parseFloat(document.getElementById('zoomSlider').value);
+        document.getElementById('zoomValue').textContent = Math.round(currentZoom * 100) + '%';
+        updateCellSize();
+    }
+
+    function resetZoom() {
+        currentZoom = 1;
+        document.getElementById('zoomSlider').value = 1;
+        document.getElementById('zoomValue').textContent = '100%';
+        updateCellSize();
+    }
+
+    function updateCellSize() {
+        // Calculate appropriate cell size based on grid size and zoom
+        let baseSize = Math.max(8, Math.min(30, 600 / gridSize));
+        let cellSize = baseSize * currentZoom;
+
+        document.documentElement.style.setProperty('--cell-size', cellSize + 'px');
+
+        const wrapper = document.getElementById('gridWrapper');
+        if (wrapper) {
+            wrapper.style.transform = `scale(1)`;
         }
+    }
 
-        function updateZoom() {
-            currentZoom = parseFloat(document.getElementById('zoomSlider').value);
-            document.getElementById('zoomValue').textContent = Math.round(currentZoom * 100) + '%';
-            updateCellSize();
-        }
+    function createGrid() {
+        const grid = document.getElementById('gameGrid');
+        grid.innerHTML = '';
+        grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        gridData = {};
 
-        function resetZoom() {
-            currentZoom = 1;
-            document.getElementById('zoomSlider').value = 1;
-            document.getElementById('zoomValue').textContent = '100%';
-            updateCellSize();
-        }
+        updateCellSize();
 
-        function updateCellSize() {
-            // Calculate appropriate cell size based on grid size and zoom
-            let baseSize = Math.max(8, Math.min(30, 600 / gridSize));
-            let cellSize = baseSize * currentZoom;
-            
-            document.documentElement.style.setProperty('--cell-size', cellSize + 'px');
-            
-            const wrapper = document.getElementById('gridWrapper');
-            if (wrapper) {
-                wrapper.style.transform = `scale(1)`;
+        for (let row = 0; row < gridSize; row++) {
+            for (let col = 0; col < gridSize; col++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.row = row;
+                cell.dataset.col = col;
+                cell.addEventListener('mousedown', startDrawing);
+                cell.addEventListener('mouseenter', continueDrawing);
+                cell.addEventListener('mouseup', stopDrawing);
+                grid.appendChild(cell);
             }
         }
+    }
 
-        function createGrid() {
-            const grid = document.getElementById('gameGrid');
-            grid.innerHTML = '';
-            grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
-            gridData = {};
-            
-            updateCellSize();
+    function selectBrush(brushType) {
+        // This function is no longer needed but keeping for compatibility
+        currentBrush = brushType;
+        updateBrush();
+    }
 
-            for (let row = 0; row < gridSize; row++) {
-                for (let col = 0; col < gridSize; col++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.row = row;
-                    cell.dataset.col = col;
-                    cell.addEventListener('mousedown', startDrawing);
-                    cell.addEventListener('mouseenter', continueDrawing);
-                    cell.addEventListener('mouseup', stopDrawing);
-                    grid.appendChild(cell);
-                }
-            }
-        }
+    function startDrawing(e) {
+        isDrawing = true;
+        paintCell(e.target);
+    }
 
-        function selectBrush(brushType) {
-            currentBrush = brushType;
-            document.querySelectorAll('.brush-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-
-        function startDrawing(e) {
-            isDrawing = true;
+    function continueDrawing(e) {
+        if (isDrawing) {
             paintCell(e.target);
         }
+    }
 
-        function continueDrawing(e) {
-            if (isDrawing) {
-                paintCell(e.target);
+    function stopDrawing() {
+        isDrawing = false;
+    }
+
+    function paintCell(cell) {
+        const row = cell.dataset.row;
+        const col = cell.dataset.col;
+        const key = `${row},${col}`;
+
+        gridData[key] = currentBrush;
+
+        // Adjust text display based on cell size
+        const cellSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cell-size'));
+        if (cellSize >= 15) {
+            cell.textContent = currentBrush ? (currentBrush.length > 8 ? currentBrush.substring(0, 6) + '...' : currentBrush) : '';
+        } else {
+            cell.textContent = currentBrush ? currentBrush.charAt(0) : '';
+        }
+
+        // Visual feedback
+        cell.style.background = getBrushColor(currentBrush);
+        cell.style.color = currentBrush ? 'white' : 'black';
+    }
+
+    function getBrushColor(brush) {
+        if (!brush) return '#ffffff';
+
+        const colors = {
+            'Obj 1': '#ff6b6b',
+            'Obj 2': '#4ecdc4',
+            'Lvl 1': '#45b7d1',
+            'Lvl 2': '#96ceb4',
+            'Obj 1, Lvl 1': '#ff8a65',
+            'Obj 1, Lvl 2': '#ffb74d',
+            'Obj 2, Lvl 1': '#81c784',
+            'Obj 2, Lvl 2': '#ba68c8'
+        };
+        return colors[brush] || '#e9ecef';
+    }
+
+    function clearGrid() {
+        gridData = {};
+        document.querySelectorAll('.cell').forEach(cell => {
+            cell.textContent = '';
+            cell.style.background = 'white';
+            cell.style.color = 'black';
+        });
+    }
+
+    function exportToCSV() {
+        let csv = '';
+        for (let row = 0; row < gridSize; row++) {
+            let rowData = [];
+            for (let col = 0; col < gridSize; col++) {
+                const key = `${row},${col}`;
+                rowData.push(gridData[key] || '');
             }
+            csv += rowData.map(cell => `"${cell}"`).join(',') + '\n';
         }
+        document.getElementById('csvOutput').value = csv;
+    }
 
-        function stopDrawing() {
-            isDrawing = false;
-        }
+    function exportToJSON() {
+        const mapName = document.getElementById('mapName').value;
+        const exportData = {
+            name: mapName,
+            size: gridSize,
+            data: gridData,
+            created: new Date().toISOString()
+        };
+        document.getElementById('csvOutput').value = JSON.stringify(exportData, null, 2);
+    }
 
-        function paintCell(cell) {
-            const row = cell.dataset.row;
-            const col = cell.dataset.col;
-            const key = `${row},${col}`;
-            
-            gridData[key] = currentBrush;
-            
-            // Adjust text display based on cell size
-            const cellSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cell-size'));
-            if (cellSize >= 15) {
-                cell.textContent = currentBrush ? (currentBrush.length > 8 ? currentBrush.substring(0, 6) + '...' : currentBrush) : '';
+    function saveTemplate() {
+        const mapName = document.getElementById('mapName').value;
+        const template = {
+            name: mapName,
+            size: gridSize,
+            data: gridData
+        };
+        localStorage.setItem(`template_${mapName}`, JSON.stringify(template));
+        alert(`Template "${mapName}" saved!`);
+    }
+
+    function loadTemplate() {
+        const mapName = prompt('Enter template name to load:');
+        if (mapName) {
+            const template = localStorage.getItem(`template_${mapName}`);
+            if (template) {
+                const data = JSON.parse(template);
+                gridSize = data.size;
+                document.getElementById('gridSize').value = gridSize;
+                gridData = data.data;
+                createGrid();
+                // Repaint grid
+                Object.keys(gridData).forEach(key => {
+                    const [row, col] = key.split(',');
+                    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                    if (cell) {
+                        paintCell(cell);
+                    }
+                });
             } else {
-                cell.textContent = currentBrush ? currentBrush.charAt(0) : '';
+                alert('Template not found!');
             }
-            
-            // Visual feedback
-            cell.style.background = getBrushColor(currentBrush);
-            cell.style.color = currentBrush ? 'white' : 'black';
         }
+    }
 
-        function getBrushColor(brush) {
-            const colors = {
-                'Obj 1': '#ff6b6b',
-                'Obj 2': '#4ecdc4',
-                'Lvl 1': '#45b7d1',
-                'Lvl 2': '#96ceb4',
-                'Obj 1, Lvl 1': '#ff8a65',
-                'Obj 1, Lvl 2': '#ffb74d',
-                'Obj 2, Lvl 1': '#81c784',
-                'Obj 2, Lvl 2': '#ba68c8',
-                '': '#ffffff'
-            };
-            return colors[brush] || '#ffffff';
-        }
-
-        function clearGrid() {
-            gridData = {};
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.textContent = '';
-                cell.style.background = 'white';
-                cell.style.color = 'black';
-            });
-        }
-
-        function exportToCSV() {
-            let csv = '';
-            for (let row = 0; row < gridSize; row++) {
-                let rowData = [];
+    function loadPreset(type) {
+        clearGrid();
+        // Generate some sample patterns
+        if (type === 'forest') {
+            // Random forest pattern
+            for (let i = 0; i < gridSize * gridSize * 0.3; i++) {
+                const row = Math.floor(Math.random() * gridSize);
+                const col = Math.floor(Math.random() * gridSize);
+                const key = `${row},${col}`;
+                gridData[key] = Math.random() > 0.5 ? 'Obj 1' : 'Obj 1, Lvl 1';
+            }
+        } else if (type === 'dungeon') {
+            // Create walls around border
+            for (let i = 0; i < gridSize; i++) {
+                gridData[`0,${i}`] = 'Obj 2';
+                gridData[`${gridSize-1},${i}`] = 'Obj 2';
+                gridData[`${i},0`] = 'Obj 2';
+                gridData[`${i},${gridSize-1}`] = 'Obj 2';
+            }
+            // Add some internal walls
+            for (let i = 0; i < gridSize * 2; i++) {
+                const row = Math.floor(Math.random() * (gridSize-2)) + 1;
+                const col = Math.floor(Math.random() * (gridSize-2)) + 1;
+                gridData[`${row},${col}`] = 'Obj 2';
+            }
+        } else if (type === 'city') {
+            // Create a grid pattern
+            for (let row = 0; row < gridSize; row += 5) {
                 for (let col = 0; col < gridSize; col++) {
-                    const key = `${row},${col}`;
-                    rowData.push(gridData[key] || '');
+                    gridData[`${row},${col}`] = 'Obj 2, Lvl 2';
                 }
-                csv += rowData.map(cell => `"${cell}"`).join(',') + '\n';
             }
-            document.getElementById('csvOutput').value = csv;
-        }
-
-        function exportToJSON() {
-            const mapName = document.getElementById('mapName').value;
-            const exportData = {
-                name: mapName,
-                size: gridSize,
-                data: gridData,
-                created: new Date().toISOString()
-            };
-            document.getElementById('csvOutput').value = JSON.stringify(exportData, null, 2);
-        }
-
-        function saveTemplate() {
-            const mapName = document.getElementById('mapName').value;
-            const template = {
-                name: mapName,
-                size: gridSize,
-                data: gridData
-            };
-            localStorage.setItem(`template_${mapName}`, JSON.stringify(template));
-            alert(`Template "${mapName}" saved!`);
-        }
-
-        function loadTemplate() {
-            const mapName = prompt('Enter template name to load:');
-            if (mapName) {
-                const template = localStorage.getItem(`template_${mapName}`);
-                if (template) {
-                    const data = JSON.parse(template);
-                    gridSize = data.size;
-                    document.getElementById('gridSize').value = gridSize;
-                    gridData = data.data;
-                    createGrid();
-                    // Repaint grid
-                    Object.keys(gridData).forEach(key => {
-                        const [row, col] = key.split(',');
-                        const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                        if (cell) {
-                            paintCell(cell);
-                        }
-                    });
-                } else {
-                    alert('Template not found!');
+            for (let col = 0; col < gridSize; col += 5) {
+                for (let row = 0; row < gridSize; row++) {
+                    gridData[`${row},${col}`] = 'Obj 2, Lvl 2';
                 }
             }
         }
 
-        function loadPreset(type) {
-            clearGrid();
-            // Generate some sample patterns
-            if (type === 'forest') {
-                // Random forest pattern
-                for (let i = 0; i < gridSize * gridSize * 0.3; i++) {
-                    const row = Math.floor(Math.random() * gridSize);
-                    const col = Math.floor(Math.random() * gridSize);
-                    const key = `${row},${col}`;
-                    gridData[key] = Math.random() > 0.5 ? 'Obj 1' : 'Obj 1, Lvl 1';
-                }
-            } else if (type === 'dungeon') {
-                // Create walls around border
-                for (let i = 0; i < gridSize; i++) {
-                    gridData[`0,${i}`] = 'Obj 2';
-                    gridData[`${gridSize-1},${i}`] = 'Obj 2';
-                    gridData[`${i},0`] = 'Obj 2';
-                    gridData[`${i},${gridSize-1}`] = 'Obj 2';
-                }
-                // Add some internal walls
-                for (let i = 0; i < gridSize * 2; i++) {
-                    const row = Math.floor(Math.random() * (gridSize-2)) + 1;
-                    const col = Math.floor(Math.random() * (gridSize-2)) + 1;
-                    gridData[`${row},${col}`] = 'Obj 2';
-                }
-            } else if (type === 'city') {
-                // Create a grid pattern
-                for (let row = 0; row < gridSize; row += 5) {
-                    for (let col = 0; col < gridSize; col++) {
-                        gridData[`${row},${col}`] = 'Obj 2, Lvl 2';
-                    }
-                }
-                for (let col = 0; col < gridSize; col += 5) {
-                    for (let row = 0; row < gridSize; row++) {
-                        gridData[`${row},${col}`] = 'Obj 2, Lvl 2';
-                    }
-                }
+        // Repaint grid
+        Object.keys(gridData).forEach(key => {
+            const [row, col] = key.split(',');
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (cell) {
+                paintCell(cell);
             }
-            
-            // Repaint grid
-            Object.keys(gridData).forEach(key => {
-                const [row, col] = key.split(',');
-                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                if (cell) {
-                    paintCell(cell);
-                }
-            });
-        }
+        });
+    }
 
-        // Initialize grid
-        createGrid();
+    // Initialize grid
+    createGrid();
+    updateBrush(); // Initialize brush display
 
-        // Prevent context menu on right click
-        document.addEventListener('contextmenu', e => e.preventDefault());
-    </script>
+    // Prevent context menu on right click
+    document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
 </body>
 </html>
