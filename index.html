@@ -91,7 +91,7 @@
             min-width: 8px;
             min-height: 8px;
             user-select: none;
-            -webkit-user-select: none;  /* Safari */
+            -webkit-user-select: none; /* Safari */
             -ms-user-select: none;
         }
 
@@ -196,6 +196,12 @@
                 <option value="Obj 7">Obj 7</option>
                 <option value="Obj 8">Obj 8</option>
                 <option value="Obj 9">Obj 9</option>
+                <option value="Obj 10">Obj 10</option>
+                <option value="Obj 11">Obj 11</option>
+                <option value="Obj 12">Obj 12</option>
+                <option value="Obj 13">Obj 13</option>
+                <option value="Obj 14">Obj 14</option>
+                <option value="Obj 15">Obj 15</option>
             </select>
         </div>
         <div class="control-group">
@@ -212,7 +218,12 @@
                 <option value="Lvl 7">Lvl 7</option>
                 <option value="Lvl 8">Lvl 8</option>
                 <option value="Lvl 9">Lvl 9</option>
-
+                <option value="Lvl 10">Lvl 10</option>
+                <option value="Lvl 11">Lvl 11</option>
+                <option value="Lvl 12">Lvl 12</option>
+                <option value="Lvl 13">Lvl 13</option>
+                <option value="Lvl 14">Lvl 14</option>
+                <option value="Lvl 15">Lvl 15</option>
             </select>
         </div>
         <div class="control-group">
@@ -232,7 +243,9 @@
         <h3>Export</h3>
         <button onclick="exportToGoogleSheetText()">Generate Text for Google Sheets</button>
 
-        <textarea class="csv-output" id="csvOutput" placeholder="CSV output will appear here..."></textarea>
+        <button onclick="importTextToGrid()">Import Text to Grid</button>
+
+        <textarea class="csv-output" id="textOutput" placeholder="CSV output will appear here..."></textarea>
     </div>
 </div>
 
@@ -319,7 +332,7 @@
                 grid.appendChild(cell);
                 cell.style.background = getBrushColor(cell.textContent);
                 cell.style.color = cell.textContent ? 'white' : 'black';
-                
+
                 const key = `${row},${col}`;
                 gridData[key] = 'Obj 0';
             }
@@ -371,130 +384,44 @@
         if (!brush) return '#ffffff';
 
         const colors = {
-            // Objs
-            'Obj 1': '#ff6b6b',
-            'Obj 2': '#4ecdc4',
-            'Obj 3': '#fcbf49',
-            'Obj 4': '#a29bfe',
-            'Obj 5': '#fd79a8',
-            'Obj 6': '#00cec9',
-            'Obj 7': '#fab1a0',
-            'Obj 8': '#6c5ce7',
-            'Obj 9': '#55efc4',
-            'Obj 0': '#ffeaa7',
+            // Base Objects (0-15)
+            'Obj 0': '#ffeaa7',   // Light yellow
+            'Obj 1': '#ff6b6b',   // Red
+            'Obj 2': '#4ecdc4',   // Teal
+            'Obj 3': '#fcbf49',   // Orange
+            'Obj 4': '#a29bfe',   // Light purple
+            'Obj 5': '#fd79a8',   // Pink
+            'Obj 6': '#00cec9',   // Cyan
+            'Obj 7': '#fab1a0',   // Peach
+            'Obj 8': '#6c5ce7',   // Purple
+            'Obj 9': '#55efc4',   // Mint green
+            'Obj 10': '#e17055',  // Coral
+            'Obj 11': '#81ecec',  // Light cyan
+            'Obj 12': '#fd79a8',  // Magenta
+            'Obj 13': '#00b894',  // Sea green
+            'Obj 14': '#fdcb6e',  // Golden
+            'Obj 15': '#74b9ff',  // Sky blue
 
-            // Lvls
-            'Lvl 1': '#45b7d1',
-            'Lvl 2': '#96ceb4',
-            'Lvl 3': '#f67280',
-            'Lvl 4': '#c06c84',
-            'Lvl 5': '#6c5b7b',
-            'Lvl 6': '#355c7d',
-            'Lvl 7': '#ffb347',
-            'Lvl 8': '#b2bec3',
-            'Lvl 9': '#74b9ff',
-            'Lvl 0': '#dfe6e9',
+            // Base Levels (0-15)
+            'Lvl 0': '#dfe6e9',   // Light gray
+            'Lvl 1': '#45b7d1',   // Blue
+            'Lvl 2': '#96ceb4',   // Light green
+            'Lvl 3': '#f67280',   // Rose
+            'Lvl 4': '#c06c84',   // Mauve
+            'Lvl 5': '#6c5b7b',   // Dark purple
+            'Lvl 6': '#355c7d',   // Dark blue
+            'Lvl 7': '#ffb347',   // Orange
+            'Lvl 8': '#b2bec3',   // Gray
+            'Lvl 9': '#74b9ff',   // Light blue
+            'Lvl 10': '#55a3ff',  // Medium blue
+            'Lvl 11': '#2d3436',  // Dark gray
+            'Lvl 12': '#00b894',  // Emerald
+            'Lvl 13': '#e84393',  // Hot pink
+            'Lvl 14': '#fdcb6e',  // Yellow
+            'Lvl 15': '#636e72',  // Slate gray
 
-            // Obj + Lvl combos
-            'Obj 1, Lvl 1': '#ff8a65',
-            'Obj 1, Lvl 2': '#ffb74d',
-            'Obj 1, Lvl 3': '#ffd54f',
-            'Obj 1, Lvl 4': '#d4e157',
-            'Obj 1, Lvl 5': '#aed581',
-            'Obj 1, Lvl 6': '#81c784',
-            'Obj 1, Lvl 7': '#4db6ac',
-            'Obj 1, Lvl 8': '#4dd0e1',
-            'Obj 1, Lvl 9': '#4fc3f7',
-            'Obj 1, Lvl 0': '#9575cd',
-
-            'Obj 2, Lvl 1': '#ba68c8',
-            'Obj 2, Lvl 2': '#f06292',
-            'Obj 2, Lvl 3': '#e57373',
-            'Obj 2, Lvl 4': '#f48fb1',
-            'Obj 2, Lvl 5': '#ce93d8',
-            'Obj 2, Lvl 6': '#b39ddb',
-            'Obj 2, Lvl 7': '#90caf9',
-            'Obj 2, Lvl 8': '#a5d6a7',
-            'Obj 2, Lvl 9': '#80cbc4',
-            'Obj 2, Lvl 0': '#e6ee9c',
-
-            'Obj 3, Lvl 1': '#ff6f91',
-            'Obj 3, Lvl 2': '#ff9671',
-            'Obj 3, Lvl 3': '#ffc75f',
-            'Obj 3, Lvl 4': '#f9f871',
-            'Obj 3, Lvl 5': '#a5dee5',
-            'Obj 3, Lvl 6': '#b5ead7',
-            'Obj 3, Lvl 7': '#c7ceea',
-            'Obj 3, Lvl 8': '#d5aaff',
-            'Obj 3, Lvl 9': '#f7d794',
-            'Obj 3, Lvl 0': '#ea8685',
-
-            'Obj 4, Lvl 1': '#ff9ff3',
-            'Obj 4, Lvl 2': '#feca57',
-            'Obj 4, Lvl 3': '#ff6b6b',
-            'Obj 4, Lvl 4': '#48dbfb',
-            'Obj 4, Lvl 5': '#1dd1a1',
-            'Obj 4, Lvl 6': '#f368e0',
-            'Obj 4, Lvl 7': '#ff9f43',
-            'Obj 4, Lvl 8': '#00d2d3',
-            'Obj 4, Lvl 9': '#10ac84',
-            'Obj 4, Lvl 0': '#c8d6e5',
-
-            'Obj 5, Lvl 1': '#e84393',
-            'Obj 5, Lvl 2': '#fdcb6e',
-            'Obj 5, Lvl 3': '#00b894',
-            'Obj 5, Lvl 4': '#e17055',
-            'Obj 5, Lvl 5': '#6c5ce7',
-            'Obj 5, Lvl 6': '#ffeaa7',
-            'Obj 5, Lvl 7': '#fab1a0',
-            'Obj 5, Lvl 8': '#0984e3',
-            'Obj 5, Lvl 9': '#fd79a8',
-            'Obj 5, Lvl 0': '#81ecec',
-
-            'Obj 6, Lvl 1': '#d63031',
-            'Obj 6, Lvl 2': '#e17055',
-            'Obj 6, Lvl 3': '#00cec9',
-            'Obj 6, Lvl 4': '#fd79a8',
-            'Obj 6, Lvl 5': '#6c5ce7',
-            'Obj 6, Lvl 6': '#ffeaa7',
-            'Obj 6, Lvl 7': '#55efc4',
-            'Obj 6, Lvl 8': '#74b9ff',
-            'Obj 6, Lvl 9': '#a29bfe',
-            'Obj 6, Lvl 0': '#fdcb6e',
-
-            'Obj 7, Lvl 1': '#9b59b6',
-            'Obj 7, Lvl 2': '#3498db',
-            'Obj 7, Lvl 3': '#2ecc71',
-            'Obj 7, Lvl 4': '#e74c3c',
-            'Obj 7, Lvl 5': '#1abc9c',
-            'Obj 7, Lvl 6': '#f1c40f',
-            'Obj 7, Lvl 7': '#e67e22',
-            'Obj 7, Lvl 8': '#95a5a6',
-            'Obj 7, Lvl 9': '#34495e',
-            'Obj 7, Lvl 0': '#7f8c8d',
-
-            'Obj 8, Lvl 1': '#8e44ad',
-            'Obj 8, Lvl 2': '#2980b9',
-            'Obj 8, Lvl 3': '#27ae60',
-            'Obj 8, Lvl 4': '#c0392b',
-            'Obj 8, Lvl 5': '#16a085',
-            'Obj 8, Lvl 6': '#f39c12',
-            'Obj 8, Lvl 7': '#d35400',
-            'Obj 8, Lvl 8': '#bdc3c7',
-            'Obj 8, Lvl 9': '#2c3e50',
-            'Obj 8, Lvl 0': '#ecf0f1',
-
-            'Obj 9, Lvl 1': '#1abc9c',
-            'Obj 9, Lvl 2': '#2ecc71',
-            'Obj 9, Lvl 3': '#3498db',
-            'Obj 9, Lvl 4': '#9b59b6',
-            'Obj 9, Lvl 5': '#34495e',
-            'Obj 9, Lvl 6': '#f1c40f',
-            'Obj 9, Lvl 7': '#e67e22',
-            'Obj 9, Lvl 8': '#e74c3c',
-            'Obj 9, Lvl 9': '#ecf0f1',
-            'Obj 9, Lvl 0': '#95a5a6',
-
+            // Obj 0 combinations (0-15)
+            'Obj 0, Lvl 0': '#e58e26',
             'Obj 0, Lvl 1': '#b71540',
             'Obj 0, Lvl 2': '#1e3799',
             'Obj 0, Lvl 3': '#38ada9',
@@ -504,7 +431,282 @@
             'Obj 0, Lvl 7': '#b8e994',
             'Obj 0, Lvl 8': '#78e08f',
             'Obj 0, Lvl 9': '#fa983a',
-            'Obj 0, Lvl 0': '#e58e26',
+            'Obj 0, Lvl 10': '#f8b500',
+            'Obj 0, Lvl 11': '#e55039',
+            'Obj 0, Lvl 12': '#3c6382',
+            'Obj 0, Lvl 13': '#40739e',
+            'Obj 0, Lvl 14': '#487eb0',
+            'Obj 0, Lvl 15': '#8c7ae6',
+
+            // Obj 1 combinations (0-15)
+            'Obj 1, Lvl 0': '#9575cd',
+            'Obj 1, Lvl 1': '#ff8a65',
+            'Obj 1, Lvl 2': '#ffb74d',
+            'Obj 1, Lvl 3': '#ffd54f',
+            'Obj 1, Lvl 4': '#d4e157',
+            'Obj 1, Lvl 5': '#aed581',
+            'Obj 1, Lvl 6': '#81c784',
+            'Obj 1, Lvl 7': '#4db6ac',
+            'Obj 1, Lvl 8': '#4dd0e1',
+            'Obj 1, Lvl 9': '#4fc3f7',
+            'Obj 1, Lvl 10': '#42a5f5',
+            'Obj 1, Lvl 11': '#5c6bc0',
+            'Obj 1, Lvl 12': '#7986cb',
+            'Obj 1, Lvl 13': '#9575cd',
+            'Obj 1, Lvl 14': '#ba68c8',
+            'Obj 1, Lvl 15': '#f06292',
+
+            // Obj 2 combinations (0-15)
+            'Obj 2, Lvl 0': '#e6ee9c',
+            'Obj 2, Lvl 1': '#ba68c8',
+            'Obj 2, Lvl 2': '#f06292',
+            'Obj 2, Lvl 3': '#e57373',
+            'Obj 2, Lvl 4': '#f48fb1',
+            'Obj 2, Lvl 5': '#ce93d8',
+            'Obj 2, Lvl 6': '#b39ddb',
+            'Obj 2, Lvl 7': '#90caf9',
+            'Obj 2, Lvl 8': '#a5d6a7',
+            'Obj 2, Lvl 9': '#80cbc4',
+            'Obj 2, Lvl 10': '#4db6ac',
+            'Obj 2, Lvl 11': '#26a69a',
+            'Obj 2, Lvl 12': '#00695c',
+            'Obj 2, Lvl 13': '#004d40',
+            'Obj 2, Lvl 14': '#1de9b6',
+            'Obj 2, Lvl 15': '#64ffda',
+
+            // Obj 3 combinations (0-15)
+            'Obj 3, Lvl 0': '#ea8685',
+            'Obj 3, Lvl 1': '#ff6f91',
+            'Obj 3, Lvl 2': '#ff9671',
+            'Obj 3, Lvl 3': '#ffc75f',
+            'Obj 3, Lvl 4': '#f9f871',
+            'Obj 3, Lvl 5': '#a5dee5',
+            'Obj 3, Lvl 6': '#b5ead7',
+            'Obj 3, Lvl 7': '#c7ceea',
+            'Obj 3, Lvl 8': '#d5aaff',
+            'Obj 3, Lvl 9': '#f7d794',
+            'Obj 3, Lvl 10': '#ffd93d',
+            'Obj 3, Lvl 11': '#ff6b35',
+            'Obj 3, Lvl 12': '#6c5ce7',
+            'Obj 3, Lvl 13': '#a29bfe',
+            'Obj 3, Lvl 14': '#fd79a8',
+            'Obj 3, Lvl 15': '#fdcb6e',
+
+            // Obj 4 combinations (0-15)
+            'Obj 4, Lvl 0': '#c8d6e5',
+            'Obj 4, Lvl 1': '#ff9ff3',
+            'Obj 4, Lvl 2': '#feca57',
+            'Obj 4, Lvl 3': '#ff6b6b',
+            'Obj 4, Lvl 4': '#48dbfb',
+            'Obj 4, Lvl 5': '#1dd1a1',
+            'Obj 4, Lvl 6': '#f368e0',
+            'Obj 4, Lvl 7': '#ff9f43',
+            'Obj 4, Lvl 8': '#00d2d3',
+            'Obj 4, Lvl 9': '#10ac84',
+            'Obj 4, Lvl 10': '#5f27cd',
+            'Obj 4, Lvl 11': '#341f97',
+            'Obj 4, Lvl 12': '#00d2d3',
+            'Obj 4, Lvl 13': '#ff9ff3',
+            'Obj 4, Lvl 14': '#54a0ff',
+            'Obj 4, Lvl 15': '#2e86de',
+
+            // Obj 5 combinations (0-15)
+            'Obj 5, Lvl 0': '#81ecec',
+            'Obj 5, Lvl 1': '#e84393',
+            'Obj 5, Lvl 2': '#fdcb6e',
+            'Obj 5, Lvl 3': '#00b894',
+            'Obj 5, Lvl 4': '#e17055',
+            'Obj 5, Lvl 5': '#6c5ce7',
+            'Obj 5, Lvl 6': '#ffeaa7',
+            'Obj 5, Lvl 7': '#fab1a0',
+            'Obj 5, Lvl 8': '#0984e3',
+            'Obj 5, Lvl 9': '#fd79a8',
+            'Obj 5, Lvl 10': '#d63031',
+            'Obj 5, Lvl 11': '#74b9ff',
+            'Obj 5, Lvl 12': '#a29bfe',
+            'Obj 5, Lvl 13': '#fd79a8',
+            'Obj 5, Lvl 14': '#fdcb6e',
+            'Obj 5, Lvl 15': '#00cec9',
+
+            // Obj 6 combinations (0-15)
+            'Obj 6, Lvl 0': '#fdcb6e',
+            'Obj 6, Lvl 1': '#d63031',
+            'Obj 6, Lvl 2': '#e17055',
+            'Obj 6, Lvl 3': '#00cec9',
+            'Obj 6, Lvl 4': '#fd79a8',
+            'Obj 6, Lvl 5': '#6c5ce7',
+            'Obj 6, Lvl 6': '#ffeaa7',
+            'Obj 6, Lvl 7': '#55efc4',
+            'Obj 6, Lvl 8': '#74b9ff',
+            'Obj 6, Lvl 9': '#a29bfe',
+            'Obj 6, Lvl 10': '#0984e3',
+            'Obj 6, Lvl 11': '#00b894',
+            'Obj 6, Lvl 12': '#e84393',
+            'Obj 6, Lvl 13': '#fab1a0',
+            'Obj 6, Lvl 14': '#81ecec',
+            'Obj 6, Lvl 15': '#636e72',
+
+            // Obj 7 combinations (0-15)
+            'Obj 7, Lvl 0': '#7f8c8d',
+            'Obj 7, Lvl 1': '#9b59b6',
+            'Obj 7, Lvl 2': '#3498db',
+            'Obj 7, Lvl 3': '#2ecc71',
+            'Obj 7, Lvl 4': '#e74c3c',
+            'Obj 7, Lvl 5': '#1abc9c',
+            'Obj 7, Lvl 6': '#f1c40f',
+            'Obj 7, Lvl 7': '#e67e22',
+            'Obj 7, Lvl 8': '#95a5a6',
+            'Obj 7, Lvl 9': '#34495e',
+            'Obj 7, Lvl 10': '#8e44ad',
+            'Obj 7, Lvl 11': '#2980b9',
+            'Obj 7, Lvl 12': '#27ae60',
+            'Obj 7, Lvl 13': '#c0392b',
+            'Obj 7, Lvl 14': '#16a085',
+            'Obj 7, Lvl 15': '#f39c12',
+
+            // Obj 8 combinations (0-15)
+            'Obj 8, Lvl 0': '#ecf0f1',
+            'Obj 8, Lvl 1': '#8e44ad',
+            'Obj 8, Lvl 2': '#2980b9',
+            'Obj 8, Lvl 3': '#27ae60',
+            'Obj 8, Lvl 4': '#c0392b',
+            'Obj 8, Lvl 5': '#16a085',
+            'Obj 8, Lvl 6': '#f39c12',
+            'Obj 8, Lvl 7': '#d35400',
+            'Obj 8, Lvl 8': '#bdc3c7',
+            'Obj 8, Lvl 9': '#2c3e50',
+            'Obj 8, Lvl 10': '#9b59b6',
+            'Obj 8, Lvl 11': '#3498db',
+            'Obj 8, Lvl 12': '#2ecc71',
+            'Obj 8, Lvl 13': '#e74c3c',
+            'Obj 8, Lvl 14': '#1abc9c',
+            'Obj 8, Lvl 15': '#e67e22',
+
+            // Obj 9 combinations (0-15)
+            'Obj 9, Lvl 0': '#95a5a6',
+            'Obj 9, Lvl 1': '#1abc9c',
+            'Obj 9, Lvl 2': '#2ecc71',
+            'Obj 9, Lvl 3': '#3498db',
+            'Obj 9, Lvl 4': '#9b59b6',
+            'Obj 9, Lvl 5': '#34495e',
+            'Obj 9, Lvl 6': '#f1c40f',
+            'Obj 9, Lvl 7': '#e67e22',
+            'Obj 9, Lvl 8': '#e74c3c',
+            'Obj 9, Lvl 9': '#ecf0f1',
+            'Obj 9, Lvl 10': '#8e44ad',
+            'Obj 9, Lvl 11': '#2980b9',
+            'Obj 9, Lvl 12': '#27ae60',
+            'Obj 9, Lvl 13': '#c0392b',
+            'Obj 9, Lvl 14': '#16a085',
+            'Obj 9, Lvl 15': '#f39c12',
+
+            // Obj 10 combinations (0-15)
+            'Obj 10, Lvl 0': '#ff7675',
+            'Obj 10, Lvl 1': '#fd79a8',
+            'Obj 10, Lvl 2': '#fdcb6e',
+            'Obj 10, Lvl 3': '#e17055',
+            'Obj 10, Lvl 4': '#00b894',
+            'Obj 10, Lvl 5': '#00cec9',
+            'Obj 10, Lvl 6': '#6c5ce7',
+            'Obj 10, Lvl 7': '#a29bfe',
+            'Obj 10, Lvl 8': '#74b9ff',
+            'Obj 10, Lvl 9': '#0984e3',
+            'Obj 10, Lvl 10': '#2d3436',
+            'Obj 10, Lvl 11': '#636e72',
+            'Obj 10, Lvl 12': '#b2bec3',
+            'Obj 10, Lvl 13': '#ddd',
+            'Obj 10, Lvl 14': '#55efc4',
+            'Obj 10, Lvl 15': '#81ecec',
+
+            // Obj 11 combinations (0-15)
+            'Obj 11, Lvl 0': '#74b9ff',
+            'Obj 11, Lvl 1': '#0984e3',
+            'Obj 11, Lvl 2': '#00b894',
+            'Obj 11, Lvl 3': '#00cec9',
+            'Obj 11, Lvl 4': '#55efc4',
+            'Obj 11, Lvl 5': '#81ecec',
+            'Obj 11, Lvl 6': '#fd79a8',
+            'Obj 11, Lvl 7': '#e84393',
+            'Obj 11, Lvl 8': '#a29bfe',
+            'Obj 11, Lvl 9': '#6c5ce7',
+            'Obj 11, Lvl 10': '#fdcb6e',
+            'Obj 11, Lvl 11': '#ffeaa7',
+            'Obj 11, Lvl 12': '#fab1a0',
+            'Obj 11, Lvl 13': '#ff7675',
+            'Obj 11, Lvl 14': '#ff6b6b',
+            'Obj 11, Lvl 15': '#e17055',
+
+            // Obj 12 combinations (0-15)
+            'Obj 12, Lvl 0': '#e84393',
+            'Obj 12, Lvl 1': '#fd79a8',
+            'Obj 12, Lvl 2': '#ff7675',
+            'Obj 12, Lvl 3': '#ff6b6b',
+            'Obj 12, Lvl 4': '#e17055',
+            'Obj 12, Lvl 5': '#fab1a0',
+            'Obj 12, Lvl 6': '#ffeaa7',
+            'Obj 12, Lvl 7': '#fdcb6e',
+            'Obj 12, Lvl 8': '#f1c40f',
+            'Obj 12, Lvl 9': '#f39c12',
+            'Obj 12, Lvl 10': '#e67e22',
+            'Obj 12, Lvl 11': '#d35400',
+            'Obj 12, Lvl 12': '#6c5ce7',
+            'Obj 12, Lvl 13': '#a29bfe',
+            'Obj 12, Lvl 14': '#74b9ff',
+            'Obj 12, Lvl 15': '#0984e3',
+
+            // Obj 13 combinations (0-15)
+            'Obj 13, Lvl 0': '#1dd1a1',
+            'Obj 13, Lvl 1': '#10ac84',
+            'Obj 13, Lvl 2': '#00b894',
+            'Obj 13, Lvl 3': '#00cec9',
+            'Obj 13, Lvl 4': '#55efc4',
+            'Obj 13, Lvl 5': '#81ecec',
+            'Obj 13, Lvl 6': '#74b9ff',
+            'Obj 13, Lvl 7': '#0984e3',
+            'Obj 13, Lvl 8': '#2980b9',
+            'Obj 13, Lvl 9': '#3498db',
+            'Obj 13, Lvl 10': '#6c5ce7',
+            'Obj 13, Lvl 11': '#a29bfe',
+            'Obj 13, Lvl 12': '#fd79a8',
+            'Obj 13, Lvl 13': '#e84393',
+            'Obj 13, Lvl 14': '#ff7675',
+            'Obj 13, Lvl 15': '#e17055',
+
+            // Obj 14 combinations (0-15)
+            'Obj 14, Lvl 0': '#f39c12',
+            'Obj 14, Lvl 1': '#f1c40f',
+            'Obj 14, Lvl 2': '#fdcb6e',
+            'Obj 14, Lvl 3': '#ffeaa7',
+            'Obj 14, Lvl 4': '#fab1a0',
+            'Obj 14, Lvl 5': '#ff7675',
+            'Obj 14, Lvl 6': '#fd79a8',
+            'Obj 14, Lvl 7': '#e84393',
+            'Obj 14, Lvl 8': '#a29bfe',
+            'Obj 14, Lvl 9': '#6c5ce7',
+            'Obj 14, Lvl 10': '#74b9ff',
+            'Obj 14, Lvl 11': '#0984e3',
+            'Obj 14, Lvl 12': '#00cec9',
+            'Obj 14, Lvl 13': '#55efc4',
+            'Obj 14, Lvl 14': '#81ecec',
+            'Obj 14, Lvl 15': '#00b894',
+
+            // Obj 15 combinations (0-15)
+            'Obj 15, Lvl 0': '#0984e3',
+            'Obj 15, Lvl 1': '#74b9ff',
+            'Obj 15, Lvl 2': '#54a0ff',
+            'Obj 15, Lvl 3': '#2e86de',
+            'Obj 15, Lvl 4': '#2980b9',
+            'Obj 15, Lvl 5': '#3498db',
+            'Obj 15, Lvl 6': '#00cec9',
+            'Obj 15, Lvl 7': '#55efc4',
+            'Obj 15, Lvl 8': '#81ecec',
+            'Obj 15, Lvl 9': '#00b894',
+            'Obj 15, Lvl 10': '#1dd1a1',
+            'Obj 15, Lvl 11': '#10ac84',
+            'Obj 15, Lvl 12': '#6c5ce7',
+            'Obj 15, Lvl 13': '#a29bfe',
+            'Obj 15, Lvl 14': '#fd79a8',
+            'Obj 15, Lvl 15': '#e84393',
         };
 
         return colors[brush] || '#e9ecef';
@@ -530,7 +732,7 @@
             }
             csv += rowData.map(cell => `"${cell}"`).join(',') + '\n';
         }
-        document.getElementById('csvOutput').value = csv;
+        document.getElementById('textOutput').value = csv;
     }
 
     function exportToGoogleSheetText() {
@@ -543,7 +745,59 @@
             }
             text += rowData.join('\t') + '\n'; // use tab instead of comma
         }
-        document.getElementById('csvOutput').value = text.trim();
+        document.getElementById('textOutput').value = text.trim();
+    }
+
+    function importTextToGrid() {
+        const text = document.getElementById('textOutput').value.trim();
+        if (!text) {
+            alert('Please paste text data in the text area first.');
+            return;
+        }
+
+        const lines = text.split('\n');
+        let parsedData = [];
+        for (let row = 0; row < lines.length; row++) {
+            let cells;
+            if (lines[row].includes('\t')) {
+                // Tab-separated format
+                cells = lines[row].split('\t');
+            }
+            parsedData.push(cells);
+        }
+
+        const newSize = Math.max(parsedData.length, Math.max(...parsedData.map(row => row.length)));
+
+        if (newSize !== gridSize) {
+            gridSize = newSize;
+            document.getElementById('gridSize').value = gridSize;
+            updateGridSize();
+        }
+
+        const grid = document.getElementById('gameGrid');
+
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                const row = parsedData[j];
+                const cellValue = row[i];
+                const gridKey = `${j},${i}`;
+
+                gridData[gridKey] = cellValue;
+
+                // Adjust text display based on cell size
+                const cell = grid.querySelector(`[data-row="${j}"][data-col="${i}"]`);
+                const cellSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cell-size'));
+                if (cellSize >= 15) {
+                    cell.textContent = cellValue ? (cellValue.length > 8 ? cellValue.substring(0, 6) + '...' : cellValue) : '';
+                } else {
+                    cell.textContent = cellValue ? cellValue.charAt(0) : '';
+                }
+
+                // Visual feedback
+                cell.style.background = getBrushColor(cellValue);
+                cell.style.color = cellValue ? 'white' : 'black';
+            }
+        }
     }
 
     // Initialize grid
