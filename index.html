@@ -242,10 +242,24 @@
     <div class="export-section">
         <h3>Export</h3>
         <button onclick="exportToGoogleSheetText()">Generate Text for Google Sheets</button>
-
-        <button onclick="importTextToGrid()">Import Text to Grid</button>
-
         <textarea class="csv-output" id="textOutput" placeholder="CSV output will appear here..."></textarea>
+    </div>
+
+    <div class="export-section">
+        <h3>Import CSV</h3>
+        <button onclick="importCSVToGrid()">Import CSV to Grid</button>
+        <textarea class="csv-output" id="textCSVInput" placeholder="CSV output will appear here..."></textarea>
+    </div>
+
+    <div class="export-section">
+        <h3>Import JSON</h3>
+        <label>Level:</label>
+        <input type="file" id="levelFileInput" accept=".json" style="margin-left: 5ch;">
+        <br>
+        <label>Resource:</label>
+        <input type="file" id="resourceFileInput" accept=".json" style="margin-left: 1ch;">
+
+        <button onclick="importJSONToGrid()">Import JSON to Grid</button>
     </div>
 </div>
 
@@ -748,7 +762,7 @@
         document.getElementById('textOutput').value = text.trim();
     }
 
-    function importTextToGrid() {
+    function importCSVToGrid() {
         const text = document.getElementById('textOutput').value.trim();
         if (!text) {
             alert('Please paste text data in the text area first.');
@@ -796,6 +810,128 @@
                 // Visual feedback
                 cell.style.background = getBrushColor(cellValue);
                 cell.style.color = cellValue ? 'white' : 'black';
+            }
+        }
+    }
+
+    let selectedLevelLayoutFile = null;
+    document.getElementById('levelFileInput').addEventListener('change', function (event) {
+        selectedLevelLayoutFile = event.target.files[0];
+    });
+
+    let selectedResourceLayoutFile = null;
+    document.getElementById('resourceFileInput').addEventListener('change', function (event) {
+        selectedResourceLayoutFile = event.target.files[0];
+    });
+
+    function importJSONToGrid() {
+        if (!selectedLevelLayoutFile) {
+            return;
+        }
+
+        if (!selectedResourceLayoutFile) {
+            return;
+        }
+
+        const levelReader = new FileReader();
+        const resourceReader = new FileReader();
+
+        let filesLoaded = 0;
+        const checkDone = () => {
+            if (++filesLoaded === 2) {
+                console.log("Both files loaded!");
+                processFiles();
+            }
+        };
+
+        let tileInfos = [];
+        let resourceInfos = [];
+        levelReader.onload = function (e) {
+            try {
+                const jsonText = e.target.result;
+                const parsed = JSON.parse(jsonText);
+
+                for (const item of parsed.Items) {
+                    if ('id' in item) {
+                        tileInfos.push({x: item.x, y: item.y, id: item.id});
+                    }
+                }
+                checkDone();
+            } catch (err) {
+                console.error("Invalid JSON file", err);
+            }
+        };
+
+        resourceReader.onload = function (e) {
+            try {
+                const jsonText = e.target.result;
+                const parsed = JSON.parse(jsonText);
+
+                for (const item of parsed.Items) {
+                    if ('level' in item) {
+                        resourceInfos.push({x: item.x, y: item.y, level: item.level});
+                    }
+                }
+                checkDone();
+            } catch (err) {
+                console.error("Invalid JSON file", err);
+            }
+        };
+        levelReader.readAsText(selectedLevelLayoutFile);
+        resourceReader.readAsText(selectedResourceLayoutFile);
+
+        function processFiles() {
+            
+            clearGrid();
+            
+            let max = 0;
+            for (let i = 0; i < tileInfos.length; i++) {
+                const tile = tileInfos[i];
+                max = Math.max(tile.x, tile.y, max);
+            }
+
+            gridSize = max;
+            document.getElementById('gridSize').value = gridSize;
+            updateGridSize();
+            
+            for (let i = 0; i < tileInfos.length; i++) {
+                const tile = tileInfos[i];
+                const gridKey = `${tile.x},${tile.y}`;
+                let data = '';
+                data = "Obj " + tile.id;
+                gridData[gridKey] = data;
+            }
+
+            for (let j = 0; j < resourceInfos.length; j++) {
+                const tile = resourceInfos[j];
+                const gridKey = `${tile.x},${tile.y}`;
+                let currentData = '';
+                currentData = gridData[gridKey];
+                let data = '';
+                data = currentData + ", Lvl " + tile.level;
+                gridData[gridKey] = data;
+            }
+
+            const grid = document.getElementById('gameGrid');
+            
+            for (let k = 0; k < gridSize; k++) {
+                for (let l = 0; l < gridSize; l++) {
+                    const gridKey = `${l},${k}`;
+                    const cellValue = gridData[gridKey];
+                    
+                    // Adjust text display based on cell size
+                    const cell = grid.querySelector(`[data-row="${l}"][data-col="${k}"]`);
+                    const cellSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cell-size'));
+                    if (cellSize >= 15) {
+                        cell.textContent = cellValue ? (cellValue.length > 8 ? cellValue.substring(0, 6) + '...' : cellValue) : '';
+                    } else {
+                        cell.textContent = cellValue ? cellValue.charAt(0) : '';
+                    }
+
+                    // Visual feedback
+                    cell.style.background = getBrushColor(cellValue);
+                    cell.style.color = cellValue ? 'white' : 'black';
+                }
             }
         }
     }
